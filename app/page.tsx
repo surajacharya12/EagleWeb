@@ -1,7 +1,31 @@
-import Image from "next/image";
+import Hero from "./Components/Hero/page";
+import About from "./Components/About/page";
+import Services from "./Components/Servises/page";
+import Stats from "./Components/Stats/page";
+import Testimonials from "./Components/Testimonials/page";
+import FAQ from "./Components/FAQ/page";
+import CTA from "./Components/CTA/page";
+import Footer from "./Components/Footer/page";
+import ParticleBackground from "./Components/shared/ParticleBackground";
+import ScrollProgress from "./Components/shared/ScrollProgress";
+import CustomCursor from "./Components/shared/CustomCursor";
+import Founder from "./Components/Founder/page";
 
 export default function Home() {
   return (
-    <navBar />
+    <div className="bg-[#0a0a1f] min-h-screen relative">
+      <ScrollProgress />
+      <CustomCursor />
+      <ParticleBackground />
+      <Hero />
+      <Stats />
+      <About />
+      <Services />
+      <Founder />
+      <Testimonials />
+      <FAQ />
+      <CTA />
+      <Footer />
+    </div>
   );
 }
