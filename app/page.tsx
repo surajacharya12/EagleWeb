@@ -5,7 +5,6 @@ import Stats from "./Components/Stats/page";
 import Testimonials from "./Components/Testimonials/page";
 import FAQ from "./Components/FAQ/page";
 import CTA from "./Components/CTA/page";
-import Footer from "./Components/Footer/page";
 import ParticleBackground from "./Components/shared/ParticleBackground";
 import ScrollProgress from "./Components/shared/ScrollProgress";
 import CustomCursor from "./Components/shared/CustomCursor";
