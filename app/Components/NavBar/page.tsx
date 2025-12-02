@@ -180,7 +180,7 @@ const Navbar = () => {
                         Featured Projects
                       </h3>
                       <div className="space-y-4">
-                        <div className="menu-item">
+                        <Link href="/projects/metrics" className="menu-item">
                           <FiDatabase className="text-blue-400" />
                           <div>
                             <h4 className="font-medium text-blue-400">
@@ -190,7 +190,7 @@ const Navbar = () => {
                               View detailed statistics and analytics
                             </p>
                           </div>
-                        </div>
+                        </Link>
                       </div>
                     </div>
                   </div>

@@ -13,7 +13,7 @@ import {
 export default function Footer() {
   const footerLinks = {
     Company: [
-      { name: "About Us", href: "/about" },
+      { name: "About Us", href: "/Components/About" },
       { name: "Our Team", href: "/team" },
       { name: "Careers", href: "/careers" },
       { name: "Contact", href: "/contact" },
@@ -25,7 +25,7 @@ export default function Footer() {
       { name: "Consulting", href: "/services/consulting" },
     ],
     Resources: [
-      { name: "Blog", href: "/blog" },
+      { name: "Blog", href: "/blogs" },
       { name: "Documentation", href: "/docs" },
       { name: "Tutorials", href: "/tutorials" },
       { name: "Case Studies", href: "/case-studies" },
