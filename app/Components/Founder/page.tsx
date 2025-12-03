@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiLinkedin, FiTwitter, FiMail } from "react-icons/fi";
+import API_URL from "@/app/api/url";
 
 interface SocialMedia {
   linkedin: string;
@@ -21,20 +22,45 @@ interface Founder {
 
 export default function Founder() {
   const [founder, setFounder] = useState<Founder | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/founder")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchFounder = async () => {
+      try {
+        const res = await fetch(`${API_URL}/founder`); // fix here
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
         if (data.success && data.data) {
           setFounder(data.data);
+        } else {
+          setError("Failed to load founder data.");
         }
-      })
-      .catch((err) => console.error("Error fetching founder data:", err));
+      } catch (err: any) {
+        console.error("Error fetching founder data:", err);
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFounder();
   }, []);
 
-  if (!founder) {
+  if (loading) {
     return <p className="text-center text-white py-32">Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500 py-32">Error: {error}</p>;
+  }
+
+  if (!founder) {
+    return (
+      <p className="text-center text-white py-32">No founder data found.</p>
+    );
   }
 
   return (
