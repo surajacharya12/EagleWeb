@@ -5,8 +5,18 @@ import { FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import API_URL from "@/app/api/url";
 
+interface Contributor {
+  name: string;
+  role: string;
+  avatar: string;
+  contributions: number;
+  github: string;
+  linkedin: string;
+  twitter: string;
+}
+
 export default function Contributors() {
-  const [contributors, setContributors] = useState([]);
+  const [contributors, setContributors] = useState<Contributor[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,8 +28,8 @@ export default function Contributors() {
           result?.success && Array.isArray(result.data)
             ? result.data
             : Array.isArray(result)
-            ? result
-            : [];
+              ? result
+              : [];
 
         setContributors(data);
       } catch (err) {
