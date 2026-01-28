@@ -23,12 +23,12 @@ export default function Footer() {
       { name: "Mobile Apps", href: "/services/mobile" },
       { name: "Cloud Solutions", href: "/services/cloud" },
       { name: "Consulting", href: "/services/consulting" },
+      { name: "AISolutions", href: "/services/ai" },
+      { name: "Design", href: "/services/design" }
     ],
     Resources: [
       { name: "Blog", href: "/blogs" },
-      { name: "Documentation", href: "/docs" },
-      { name: "Tutorials", href: "/tutorials" },
-      { name: "Case Studies", href: "/case-studies" },
+
     ],
     Legal: [
       { name: "Privacy Policy", href: "/privacy" },

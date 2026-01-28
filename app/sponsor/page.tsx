@@ -1,72 +1,36 @@
 "use client";
 import { motion } from "framer-motion";
 import { FiDollarSign, FiCheck, FiStar, FiTrendingUp } from "react-icons/fi";
+import { useState, useEffect } from "react";
+import { getInvolvedApi } from "@/app/api/getInvolved";
 
 export default function Sponsor() {
-  const sponsorshipTiers = [
-    {
-      name: "Bronze",
-      price: "$1,000",
-      period: "/year",
-      color: "from-orange-600 to-yellow-600",
-      features: [
-        "Logo on website",
-        "Social media mentions",
-        "Newsletter feature",
-        "Event tickets (2)",
-        "Community recognition",
-      ],
-      popular: false,
-    },
-    {
-      name: "Silver",
-      price: "$5,000",
-      period: "/year",
-      color: "from-gray-400 to-gray-600",
-      features: [
-        "All Bronze benefits",
-        "Blog post feature",
-        "Event booth space",
-        "Event tickets (5)",
-        "Quarterly reports",
-        "Priority support",
-      ],
-      popular: false,
-    },
-    {
-      name: "Gold",
-      price: "$10,000",
-      period: "/year",
-      color: "from-yellow-400 to-yellow-600",
-      features: [
-        "All Silver benefits",
-        "Speaking opportunity",
-        "Custom workshop",
-        "Event tickets (10)",
-        "Monthly reports",
-        "Dedicated account manager",
-        "Co-branded content",
-      ],
-      popular: true,
-    },
-    {
-      name: "Platinum",
-      price: "$25,000",
-      period: "/year",
-      color: "from-blue-400 to-purple-600",
-      features: [
-        "All Gold benefits",
-        "Title sponsorship",
-        "Executive roundtable",
-        "Event tickets (20)",
-        "Weekly reports",
-        "Strategic partnership",
-        "Custom programs",
-        "VIP networking events",
-      ],
-      popular: false,
-    },
-  ];
+  const [sponsorshipTiers, setSponsorshipTiers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTiers = async () => {
+      try {
+        const data = await getInvolvedApi.getOptions("sponsor");
+        // Sort by price if possible, or just use order
+        setSponsorshipTiers(
+          data.map((item) => ({
+            name: item.title,
+            price: item.description.split(" - ")[0] || "$5,000", // Assuming price is in description or default
+            period: "/year",
+            color: "from-blue-400 to-purple-600",
+            features: item.benefits,
+            popular: item.featured,
+          }))
+        );
+      } catch (error) {
+        console.error("Failed to fetch sponsorship tiers", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTiers();
+  }, []);
 
   const impactAreas = [
     {
@@ -185,7 +149,7 @@ export default function Sponsor() {
                 </div>
 
                 <ul className="space-y-3 mb-8">
-                  {tier.features.map((feature, i) => (
+                  {tier.features.map((feature: string, i: number) => (
                     <li
                       key={i}
                       className="flex items-start gap-2 text-gray-300"

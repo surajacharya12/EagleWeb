@@ -1,65 +1,34 @@
 "use client";
+
 import { motion } from "framer-motion";
-import { FiGithub, FiLinkedin, FiTwitter, FiMail } from "react-icons/fi";
-import Image from "next/image";
+import { FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import API_URL from "@/app/api/url";
 
 export default function Contributors() {
-  const contributors = [
-    {
-      name: "John Doe",
-      role: "Lead Developer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-      contributions: 245,
-      github: "#",
-      linkedin: "#",
-      twitter: "#",
-    },
-    {
-      name: "Jane Smith",
-      role: "UI/UX Designer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
-      contributions: 189,
-      github: "#",
-      linkedin: "#",
-      twitter: "#",
-    },
-    {
-      name: "Mike Johnson",
-      role: "Backend Engineer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
-      contributions: 167,
-      github: "#",
-      linkedin: "#",
-      twitter: "#",
-    },
-    {
-      name: "Sarah Williams",
-      role: "DevOps Engineer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-      contributions: 134,
-      github: "#",
-      linkedin: "#",
-      twitter: "#",
-    },
-    {
-      name: "Alex Chen",
-      role: "Full Stack Developer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-      contributions: 112,
-      github: "#",
-      linkedin: "#",
-      twitter: "#",
-    },
-    {
-      name: "Emily Davis",
-      role: "QA Engineer",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
-      contributions: 98,
-      github: "#",
-      linkedin: "#",
-      twitter: "#",
-    },
-  ];
+  const [contributors, setContributors] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API_URL}/contributors`);
+        const result = await res.json();
+
+        const data =
+          result?.success && Array.isArray(result.data)
+            ? result.data
+            : Array.isArray(result)
+            ? result
+            : [];
+
+        setContributors(data);
+      } catch (err) {
+        console.error("Failed to fetch contributors:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <section className="w-full min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-32 pb-20">
@@ -75,30 +44,9 @@ export default function Contributors() {
           </h1>
           <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto">
             Meet the talented individuals who bring magic to life through their
-            dedication, creativity, and exceptional skills
+            dedication, creativity, and exceptional skills.
           </p>
         </motion.div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-          {[
-            { label: "Total Contributors", value: "50+" },
-            { label: "Total Commits", value: "2.5K+" },
-            { label: "Active Projects", value: "15" },
-            { label: "Code Reviews", value: "1.2K+" },
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all"
-            >
-              <p className="text-3xl font-bold text-blue-400">{stat.value}</p>
-              <p className="text-gray-400 mt-2">{stat.label}</p>
-            </motion.div>
-          ))}
-        </div>
 
         {/* Contributors Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -170,7 +118,7 @@ export default function Contributors() {
           </h2>
           <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
             We're always looking for talented individuals to contribute to our
-            projects
+            projects.
           </p>
           <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-full font-semibold text-white transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] hover:scale-105">
             Become a Contributor

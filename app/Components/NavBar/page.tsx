@@ -19,6 +19,13 @@ import {
   FiPackage,
   FiTool,
   FiDatabase,
+  FiCode,
+  FiSmartphone,
+  FiCloud,
+  FiCpu,
+  FiLayout,
+  FiTrendingUp,
+  FiArrowRight,
 } from "react-icons/fi";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,9 +45,8 @@ const Navbar = () => {
 
   return (
     <div
-      className={`fixed w-full z-50 transition-all duration-500 text-white text-lg ${
-        isScrolled ? "border-b border-white/10" : ""
-      }`}
+      className={`fixed w-full z-50 transition-all duration-500 text-white text-lg ${isScrolled ? "border-b border-white/10" : ""
+        }`}
       style={{
         backgroundColor: isScrolled
           ? "rgba(10, 10, 31, 0.85)"
@@ -68,6 +74,78 @@ const Navbar = () => {
             <Link href="/" className="nav-link">
               Home
             </Link>
+
+            {/* Services Dropdown */}
+            <div className="relative group">
+              <button className="nav-link flex items-center gap-1 group">
+                Services
+                <FiChevronDown className="transition-transform group-hover:rotate-180" />
+              </button>
+
+              <div className="absolute left-0 top-full hidden group-hover:block transform transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
+                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-80">
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-blue-400 mb-2">
+                      Our Expertise
+                    </h3>
+
+                    <Link href="/services/web" className="menu-item">
+                      <FiCode className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Web Development</h4>
+                        <p className="text-sm text-gray-400">Scalable web apps</p>
+                      </div>
+                    </Link>
+
+                    <Link href="/services/mobile" className="menu-item">
+                      <FiSmartphone className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Mobile Apps</h4>
+                        <p className="text-sm text-gray-400">iOS & Android</p>
+                      </div>
+                    </Link>
+
+                    <Link href="/services/cloud" className="menu-item">
+                      <FiCloud className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Cloud & DevOps</h4>
+                        <p className="text-sm text-gray-400">Infrastructure</p>
+                      </div>
+                    </Link>
+
+                    <Link href="/services/ai" className="menu-item">
+                      <FiCpu className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">AI & ML</h4>
+                        <p className="text-sm text-gray-400">Intelligent solutions</p>
+                      </div>
+                    </Link>
+
+                    <Link href="/services/design" className="menu-item">
+                      <FiLayout className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Product Design</h4>
+                        <p className="text-sm text-gray-400">UI/UX</p>
+                      </div>
+                    </Link>
+
+                    <Link href="/services/consulting" className="menu-item">
+                      <FiTrendingUp className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Consulting</h4>
+                        <p className="text-sm text-gray-400">Strategic advice</p>
+                      </div>
+                    </Link>
+
+                    <div className="pt-2 border-t border-white/10">
+                      <Link href="/services" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                        View All Services <FiArrowRight />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* About Dropdown */}
             <div className="relative group">
@@ -124,75 +202,51 @@ const Navbar = () => {
               </button>
 
               <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block transform transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
-                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-[42rem]">
-                  <div className="grid grid-cols-2 gap-8">
-                    {/* Categories */}
-                    <div>
-                      <h3 className="text-xl font-bold text-blue-400 mb-4">
-                        Project Categories
-                      </h3>
-                      <div className="space-y-4">
-                        <Link href="/projects/graduated" className="menu-item">
-                          <FiAward className="text-blue-400" />
-                          <div>
-                            <h4 className="font-medium">Graduated</h4>
-                            <p className="text-sm text-gray-400">
-                              Production-ready projects
-                            </p>
-                          </div>
-                        </Link>
+                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-max">
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-blue-400 mb-4">
+                      Project Categories
+                    </h3>
 
-                        <Link href="/projects/incubating" className="menu-item">
-                          <FiPackage className="text-blue-400" />
-                          <div>
-                            <h4 className="font-medium">Incubating</h4>
-                            <p className="text-sm text-gray-400">
-                              Growing projects
-                            </p>
-                          </div>
-                        </Link>
-
-                        <Link href="/projects/sandbox" className="menu-item">
-                          <FiTool className="text-blue-400" />
-                          <div>
-                            <h4 className="font-medium">Sandbox</h4>
-                            <p className="text-sm text-gray-400">
-                              Experimental projects
-                            </p>
-                          </div>
-                        </Link>
-
-                        <Link href="/projects/archived" className="menu-item">
-                          <FiArchive className="text-blue-400" />
-                          <div>
-                            <h4 className="font-medium">Archived</h4>
-                            <p className="text-sm text-gray-400">
-                              Completed projects
-                            </p>
-                          </div>
-                        </Link>
+                    <Link href="/projects/graduated" className="menu-item">
+                      <FiAward className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Graduated</h4>
+                        <p className="text-sm text-gray-400">
+                          Production-ready projects
+                        </p>
                       </div>
-                    </div>
+                    </Link>
 
-                    {/* Featured */}
-                    <div className="border-l border-gray-700 pl-8">
-                      <h3 className="text-xl font-bold text-blue-400 mb-4">
-                        Featured Projects
-                      </h3>
-                      <div className="space-y-4">
-                        <Link href="/projects/metrics" className="menu-item">
-                          <FiDatabase className="text-blue-400" />
-                          <div>
-                            <h4 className="font-medium text-blue-400">
-                              Project Metrics
-                            </h4>
-                            <p className="text-sm text-gray-400">
-                              View detailed statistics and analytics
-                            </p>
-                          </div>
-                        </Link>
+                    <Link href="/projects/incubating" className="menu-item">
+                      <FiPackage className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Incubating</h4>
+                        <p className="text-sm text-gray-400">
+                          Growing projects
+                        </p>
                       </div>
-                    </div>
+                    </Link>
+
+                    <Link href="/projects/sandbox" className="menu-item">
+                      <FiTool className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Sandbox</h4>
+                        <p className="text-sm text-gray-400">
+                          Experimental projects
+                        </p>
+                      </div>
+                    </Link>
+
+                    <Link href="/projects/archived" className="menu-item">
+                      <FiArchive className="text-blue-400" />
+                      <div>
+                        <h4 className="font-medium">Archived</h4>
+                        <p className="text-sm text-gray-400">
+                          Completed projects
+                        </p>
+                      </div>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -259,26 +313,6 @@ const Navbar = () => {
                         </p>
                       </div>
                     </Link>
-
-                    <Link href="/tutorials" className="menu-item">
-                      <FiBook className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Tutorials</h4>
-                        <p className="text-sm text-gray-400">
-                          Step-by-step learning guides
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link href="/docs" className="menu-item">
-                      <FiFileText className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Documentation</h4>
-                        <p className="text-sm text-gray-400">
-                          Technical documentation
-                        </p>
-                      </div>
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -307,17 +341,15 @@ const Navbar = () => {
                         </p>
                       </div>
                     </Link>
-
-                    <Link href="/sponsor" className="menu-item">
+                    <Link href="/careers" className="menu-item">
                       <FiDollarSign className="text-blue-400" />
                       <div>
-                        <h4 className="font-medium">Sponsor Us</h4>
+                        <h4 className="font-medium">Careers</h4>
                         <p className="text-sm text-gray-400">
-                          Support our initiatives
+                          Explore career opportunities
                         </p>
                       </div>
                     </Link>
-
                     <Link href="/contribute" className="menu-item">
                       <FiGithub className="text-blue-400" />
                       <div>
@@ -337,7 +369,7 @@ const Navbar = () => {
         {/* CTA Button */}
         <div className="flex items-center gap-6">
           <div className="hidden lg:flex">
-            <Link href="/joinus">
+            <Link href="/book-meeting">
               <button className="group relative px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition-all duration-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                 <span className="relative">Book Meeting</span>
@@ -362,9 +394,8 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden transition-all duration-500 ease-in-out ${
-          isOpen ? "max-h-[calc(100vh-5rem)] opacity-100" : "max-h-0 opacity-0"
-        } overflow-y-auto fixed w-full top-20 border-t border-white/10`}
+        className={`lg:hidden transition-all duration-500 ease-in-out ${isOpen ? "max-h-[calc(100vh-5rem)] opacity-100" : "max-h-0 opacity-0"
+          } overflow-y-auto fixed w-full top-20 border-t border-white/10`}
         style={{
           backgroundColor: "rgba(10, 10, 31, 0.95)",
           backdropFilter: "blur(20px)",
@@ -445,14 +476,6 @@ const Navbar = () => {
                   <FiBookOpen className="w-5 h-5" />
                   <span>Blogs</span>
                 </Link>
-                <Link href="/tutorials" className="mobile-menu-item">
-                  <FiBook className="w-5 h-5" />
-                  <span>Tutorials</span>
-                </Link>
-                <Link href="/docs" className="mobile-menu-item">
-                  <FiFileText className="w-5 h-5" />
-                  <span>Documentation</span>
-                </Link>
               </div>
             </div>
 
@@ -464,9 +487,10 @@ const Navbar = () => {
                   <FiHeart className="w-5 h-5" />
                   <span>Volunteer</span>
                 </Link>
-                <Link href="/sponsor" className="mobile-menu-item">
+                .{" "}
+                <Link href="/careers" className="mobile-menu-item">
                   <FiDollarSign className="w-5 h-5" />
-                  <span>Sponsor Us</span>
+                  <span>Careers</span>
                 </Link>
                 <Link href="/contribute" className="mobile-menu-item">
                   <FiGithub className="w-5 h-5" />
@@ -475,7 +499,7 @@ const Navbar = () => {
               </div>
             </div>
 
-            <Link href="/joinus">
+            <Link href="/book-meeting">
               <button className="group relative px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition-all duration-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] overflow-hidden w-full">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                 <span className="relative">Book Meeting</span>

@@ -1,76 +1,34 @@
 "use client";
 import { motion } from "framer-motion";
 import { FiLinkedin, FiMail, FiTwitter } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import API_URL from "@/app/api/url";
 
 export default function OurTeam() {
-  const leadership = [
-    {
-      name: "Robert Anderson",
-      role: "CEO & Founder",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Robert",
-      bio: "Visionary leader with 15+ years in tech innovation",
-      linkedin: "#",
-      twitter: "#",
-      email: "#",
-    },
-    {
-      name: "Lisa Martinez",
-      role: "CTO",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
-      bio: "Tech strategist passionate about scalable solutions",
-      linkedin: "#",
-      twitter: "#",
-      email: "#",
-    },
-    {
-      name: "David Kim",
-      role: "COO",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-      bio: "Operations expert driving efficiency and growth",
-      linkedin: "#",
-      twitter: "#",
-      email: "#",
-    },
-  ];
+  const [leadership, setLeadership] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API_URL}/team-department`);
+        const result = await res.json();
 
-  const departments = [
-    {
-      name: "Engineering",
-      members: 25,
-      icon: "💻",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      name: "Design",
-      members: 12,
-      icon: "🎨",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      name: "Product",
-      members: 8,
-      icon: "📱",
-      color: "from-green-500 to-emerald-500",
-    },
-    {
-      name: "Marketing",
-      members: 10,
-      icon: "📢",
-      color: "from-orange-500 to-red-500",
-    },
-    {
-      name: "Sales",
-      members: 15,
-      icon: "💼",
-      color: "from-yellow-500 to-orange-500",
-    },
-    {
-      name: "Support",
-      members: 18,
-      icon: "🤝",
-      color: "from-indigo-500 to-purple-500",
-    },
-  ];
+        const data = result?.data ?? result;
+
+        if (!data) return;
+
+        // If API returns an array: [ { leadership, departments } ]
+        const item = Array.isArray(data) ? data[0] : data;
+
+        setLeadership(item.leadership || []);
+        setDepartments(item.departments || []);
+      } catch (err) {
+        console.error("Failed to fetch Team and Department:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <section className="w-full min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-32 pb-20">
@@ -89,27 +47,6 @@ export default function OurTeam() {
             future of technology and innovation.
           </p>
         </motion.div>
-
-        {/* Team Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-          {[
-            { label: "Team Members", value: "88+" },
-            { label: "Countries", value: "12" },
-            { label: "Departments", value: "6" },
-            { label: "Years Combined Exp", value: "500+" },
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all"
-            >
-              <p className="text-3xl font-bold text-blue-400">{stat.value}</p>
-              <p className="text-gray-400 mt-2">{stat.label}</p>
-            </motion.div>
-          ))}
-        </div>
 
         {/* Leadership Team */}
         <motion.div
@@ -135,6 +72,7 @@ export default function OurTeam() {
                 <div className="flex flex-col items-center text-center">
                   <div className="relative w-40 h-40 mb-6">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+
                     <img
                       src={leader.avatar}
                       alt={leader.name}
@@ -157,12 +95,14 @@ export default function OurTeam() {
                     >
                       <FiLinkedin className="w-5 h-5 text-gray-300 hover:text-blue-400" />
                     </a>
+
                     <a
                       href={leader.twitter}
                       className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-all"
                     >
                       <FiTwitter className="w-5 h-5 text-gray-300 hover:text-blue-400" />
                     </a>
+
                     <a
                       href={leader.email}
                       className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-all"
@@ -203,9 +143,11 @@ export default function OurTeam() {
                   >
                     {dept.icon}
                   </div>
+
                   <h3 className="text-2xl font-bold text-white mb-2">
                     {dept.name}
                   </h3>
+
                   <p className="text-gray-400">
                     <span className="text-3xl font-bold text-blue-400">
                       {dept.members}
@@ -228,6 +170,7 @@ export default function OurTeam() {
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-6">
             Our Culture
           </h2>
+
           <p className="text-gray-300 text-lg text-center mb-8 max-w-3xl mx-auto">
             We believe in fostering a collaborative, inclusive, and innovative
             environment where every team member can thrive and make an impact.

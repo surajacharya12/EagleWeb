@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FiTarget,
@@ -8,8 +9,65 @@ import {
   FiHeart,
   FiTrendingUp,
 } from "react-icons/fi";
+import API_URL from "@/app/api/url";
 
 export default function MissionVision() {
+  const [mission, setMission] = useState<string | null>(null);
+  const [vision, setVision] = useState<string | null>(null);
+
+  // Normalize BSON-style objects from backend (like in About component)
+  const normalizeBSON = (value: any): any => {
+    if (value === null || typeof value !== "object") return value;
+
+    const keys = Object.keys(value);
+    if (keys.length === 1) {
+      const k = keys[0];
+      if (k === "$numberInt" || k === "$numberLong") return Number(value[k]);
+      if (k === "$oid") return String(value[k]);
+      if (k === "$date") {
+        const dv = value[k];
+        if (dv && typeof dv === "object") {
+          if (dv.$numberLong)
+            return new Date(Number(dv.$numberLong)).toISOString();
+        }
+        return new Date(String(dv)).toISOString();
+      }
+    }
+
+    if (Array.isArray(value)) return value.map(normalizeBSON);
+
+    const out: any = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = normalizeBSON(v);
+    }
+    return out;
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchAbout = async () => {
+      try {
+        const res = await fetch(`${API_URL}/about`);
+        const result = await res.json();
+        let aboutObj = result?.success && result.data ? result.data : result;
+        if (Array.isArray(aboutObj) && aboutObj.length > 0)
+          aboutObj = aboutObj[0];
+        if (aboutObj && mounted) {
+          const normalized = normalizeBSON(aboutObj);
+          if (normalized.vision) setVision(String(normalized.vision));
+          if (normalized.mission) setMission(String(normalized.mission));
+        }
+      } catch (err) {
+        // keep defaults if fetch fails
+        // console.warn("Failed to fetch /about:", err);
+      }
+    };
+    fetchAbout();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const goals = [
     {
       icon: <FiZap className="w-8 h-8" />,
@@ -70,9 +128,8 @@ export default function MissionVision() {
                   Our Vision
                 </h2>
                 <p className="text-gray-300 text-xl leading-relaxed">
-                  To shape a smarter world powered by intelligent solutions,
-                  seamless user experiences, and technologies that empower
-                  businesses to thrive with confidence and creativity.
+                  {vision ??
+                    "To shape a smarter world powered by intelligent solutions, seamless user experiences, and technologies that empower businesses to thrive with confidence and creativity."}
                 </p>
               </div>
             </div>
@@ -109,10 +166,8 @@ export default function MissionVision() {
                   Our Mission
                 </h2>
                 <p className="text-gray-300 text-xl leading-relaxed">
-                  We create future-ready products using purposeful design,
-                  advanced engineering, and strategic innovation — helping
-                  brands unlock new opportunities, maximize performance, and
-                  accelerate digital growth.
+                  {mission ??
+                    "We create future-ready products using purposeful design, advanced engineering, and strategic innovation — helping brands unlock new opportunities, maximize performance, and accelerate digital growth."}
                 </p>
               </div>
             </div>
@@ -185,18 +240,30 @@ export default function MissionVision() {
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { year: "2025", goal: "Expand global presence to 20+ countries" },
-              { year: "2026", goal: "Launch 50+ innovative products" },
-              { year: "2027", goal: "Achieve carbon-neutral operations" },
-            ].map((milestone, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl font-bold text-blue-400 mb-3">
-                  {milestone.year}
-                </div>
-                <p className="text-gray-300">{milestone.goal}</p>
-              </div>
-            ))}
+            {(() => {
+              const currentYear = new Date().getFullYear();
+
+              const goals = [
+                "Improve user experience",
+                "Add more useful features",
+                "Grow our community",
+              ];
+
+              // Generate exactly 3 years: current, next, next+1
+              return [0, 1, 2].map((offset) => {
+                const year = currentYear + offset;
+                const goal = goals[offset]; // each year gets its own goal
+
+                return (
+                  <div key={offset} className="text-center">
+                    <div className="text-4xl font-bold text-blue-400 mb-3">
+                      {year}
+                    </div>
+                    <p className="text-gray-300">{goal}</p>
+                  </div>
+                );
+              });
+            })()}
           </div>
         </motion.div>
       </div>

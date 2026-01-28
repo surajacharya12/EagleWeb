@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import {
   FiArrowRight,
   FiPlayCircle,
@@ -6,17 +7,38 @@ import {
   FiUsers,
   FiActivity,
 } from "react-icons/fi";
+import API_URL from "@/app/api/url";
 
 export default function Hero() {
+  const [reels, setReels] = useState<any[]>([]);
+  const [playReel, setPlayReel] = useState(false);
+
+  useEffect(() => {
+    const fetchReels = async () => {
+      try {
+        const res = await fetch(`${API_URL}/reels`);
+        const data = await res.json();
+        const reelsData = Array.isArray(data) ? data : data?.data ?? [];
+        setReels(reelsData);
+      } catch (err) {
+        console.error("Failed to fetch reels:", err);
+      }
+    };
+    fetchReels();
+  }, []);
+
+  const handlePlayReel = () => {
+    if (reels.length > 0) {
+      setPlayReel(true);
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0a1f] text-white py-20 md:py-32">
       {/* Background Gradients */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-blue-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
-
         <div className="absolute top-[20%] -right-[10%] w-[60vw] h-[60vw] bg-purple-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow delay-1000"></div>
-
-        {/* Extended bottom glow */}
         <div className="absolute bottom-[-40%] left-[20%] w-[60vw] h-[60vw] bg-indigo-600/20 rounded-full blur-[140px] mix-blend-screen animate-pulse-slow delay-2000"></div>
       </div>
 
@@ -47,14 +69,19 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start pt-2 sm:pt-4 px-4 sm:px-0">
               <button className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition-all duration-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] overflow-hidden text-sm sm:text-base">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                <span className="flex items-center justify-center gap-2">
-                  Start Your Project
-                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </span>
+                <a href="/projects/archived">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <span className="flex items-center justify-center gap-2">
+                    Start Your Project
+                    <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </a>
               </button>
 
-              <button className="group px-6 sm:px-8 py-3 sm:py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full font-semibold backdrop-blur-sm transition-all duration-300 text-sm sm:text-base">
+              <button
+                onClick={handlePlayReel}
+                className="group px-6 sm:px-8 py-3 sm:py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full font-semibold backdrop-blur-sm transition-all duration-300 text-sm sm:text-base"
+              >
                 <span className="flex items-center justify-center gap-2">
                   <FiPlayCircle className="text-lg sm:text-xl" />
                   Watch Showreel
@@ -110,45 +137,14 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Floating Boxes */}
-              <div className="absolute -top-6 sm:-top-12 -right-2 sm:-right-8 z-20 bg-gray-800/90 backdrop-blur-md p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/10 shadow-xl animate-float">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-lg">
-                    <FiTrendingUp className="text-green-400 text-base sm:text-xl" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] sm:text-xs text-gray-400">
-                      Growth
-                    </p>
-                    <p className="text-sm sm:text-lg font-bold text-white">
-                      +128%
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-6 sm:-bottom-8 -left-2 sm:-left-8 z-20 bg-gray-800/90 backdrop-blur-md p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/10 shadow-xl animate-float delay-1000">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="flex -space-x-1.5 sm:-space-x-2">
-                    {[1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-600 border-2 border-gray-800 flex items-center justify-center text-[10px] sm:text-xs"
-                      >
-                        U{i}
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <p className="text-[10px] sm:text-xs text-gray-400">
-                      Active Users
-                    </p>
-                    <p className="text-sm sm:text-lg font-bold text-white">
-                      12.5k
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {playReel && reels.length > 0 && (
+                <video
+                  src={reels[0].videoUrl}
+                  controls
+                  autoPlay
+                  className="w-full h-64 sm:h-80 rounded-xl object-cover mt-4"
+                />
+              )}
             </div>
           </div>
         </div>

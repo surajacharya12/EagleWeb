@@ -2,42 +2,21 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiLinkedin, FiTwitter, FiMail } from "react-icons/fi";
+import { founderApi, Founder as IFounder } from "@/app/api/founder";
 import API_URL from "@/app/api/url";
 
-interface SocialMedia {
-  linkedin: string;
-  twitter: string;
-  email: string;
-}
-
-interface Founder {
-  _id: string;
-  name: string;
-  position: string;
-  quote: string;
-  details: string;
-  socialMedia: SocialMedia;
-  avatar: string;
-}
-
 export default function Founder() {
-  const [founder, setFounder] = useState<Founder | null>(null);
+  const [founder, setFounder] = useState<IFounder | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const getImageUrl = (img: string) => img?.startsWith('/uploads') ? `${API_URL}${img}` : img;
 
   useEffect(() => {
     const fetchFounder = async () => {
       try {
-        const res = await fetch(`${API_URL}/founder`); // fix here
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const data = await res.json();
-        if (data.success && data.data) {
-          setFounder(data.data);
-        } else {
-          setError("Failed to load founder data.");
-        }
+        const data = await founderApi.getFounder();
+        setFounder(data);
       } catch (err: any) {
         console.error("Error fetching founder data:", err);
         setError(err.message || "Unknown error");
@@ -91,7 +70,7 @@ export default function Founder() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-2xl opacity-50"></div>
                 <img
-                  src={founder.avatar}
+                  src={getImageUrl(founder.avatar)}
                   alt={founder.name}
                   className="relative w-48 h-48 rounded-full border-4 border-white/20"
                 />
