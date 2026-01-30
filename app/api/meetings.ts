@@ -70,19 +70,26 @@ export const meetingsApi = {
     return res.json();
   },
 
-  async getUserBookings(email: string): Promise<Booking[]> {
-    const res = await fetch(`${API_URL}/meetings/bookings/user/${email}`, {
+  async getBookingByCode(code: string): Promise<Booking> {
+    const res = await fetch(`${API_URL}/meetings/bookings/code/${code}`, {
       cache: "no-store",
     });
-    if (!res.ok) throw new Error("Failed to fetch bookings");
+    if (!res.ok) {
+      if (res.status === 404) throw new Error("Booking not found");
+      throw new Error("Failed to fetch booking");
+    }
     return res.json();
   },
 
-  async cancelBooking(code: string): Promise<{ success: boolean }> {
+  async cancelBooking(code: string): Promise<{ success: boolean; data: Booking }> {
     const res = await fetch(`${API_URL}/meetings/bookings/cancel/${code}`, {
       method: "PUT",
     });
-    if (!res.ok) throw new Error("Failed to cancel booking");
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Failed to cancel booking");
+    }
     return res.json();
   },
 };
+

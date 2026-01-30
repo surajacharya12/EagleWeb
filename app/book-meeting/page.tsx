@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { meetingsApi, MeetingSlot, BookingInput } from "@/app/api/meetings";
+
 
 function StepPill({ step }: { step: number }) {
   const labels = ["Date", "Time", "Details", "Confirm"];
@@ -11,11 +13,10 @@ function StepPill({ step }: { step: number }) {
         return (
           <div key={label} className="flex items-center gap-3">
             <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold transition ${
-                active
-                  ? "bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
-                  : "bg-gray-800 text-gray-300"
-              }`}
+              className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold transition ${active
+                ? "bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
+                : "bg-gray-800 text-gray-300"
+                }`}
             >
               {i + 1}
             </div>
@@ -46,6 +47,7 @@ export default function BookMeetingPage() {
     "date" | "time" | "details" | "confirmation"
   >("date");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
   const [availableSlots, setAvailableSlots] = useState<MeetingSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<MeetingSlot | null>(null);
   const [formData, setFormData] = useState<Omit<BookingInput, "slotId">>({
@@ -135,10 +137,10 @@ export default function BookMeetingPage() {
   const formatDate = (d?: Date | null) =>
     d
       ? d.toLocaleDateString(undefined, {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-        })
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      })
       : "—";
 
   // step number for StepPill
@@ -152,10 +154,24 @@ export default function BookMeetingPage() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white text-center mb-3 mt-7">
             Schedule a meeting
           </h1>
-          <p className="text-center text-gray-300 mb-6">
+          <p className="text-center text-gray-300 mb-8">
             Pick a convenient date & time — meetings are 30 minutes by default.
             You’ll get an email confirmation after booking.
           </p>
+
+          {/* Prominent Track Booking Link */}
+          <div className="flex justify-center mb-10">
+            <Link
+              href="/book-meeting/track"
+              className="group relative flex items-center gap-3 px-6 py-3 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 rounded-full transition-all duration-300"
+            >
+              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+              <span className="text-blue-300 group-hover:text-blue-200 font-medium">
+                Already have a booking? <span className="underline decoration-blue-500/50">Track or Cancel it here</span>
+              </span>
+              <IconChevron />
+            </Link>
+          </div>
 
           <StepPill step={stepNumber} />
 
@@ -191,11 +207,10 @@ export default function BookMeetingPage() {
                           fetchSlots(d);
                         }}
                         aria-pressed={selected}
-                        className={`p-3 rounded-lg text-center font-medium transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 ${
-                          selected
-                            ? "bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
-                            : "bg-gray-800 text-gray-200"
-                        }`}
+                        className={`p-3 rounded-lg text-center font-medium transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 ${selected
+                          ? "bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
+                          : "bg-gray-800 text-gray-200"
+                          }`}
                       >
                         <div className="text-xs text-gray-300">
                           {d.toLocaleString(undefined, { weekday: "short" })}
@@ -236,11 +251,10 @@ export default function BookMeetingPage() {
                               key={slot._id}
                               onClick={() => !isFull && handleSlotSelect(slot)}
                               disabled={isFull}
-                              className={`w-full p-4 rounded-xl flex items-center justify-between gap-3 transition transform hover:scale-102 ${
-                                isFull
-                                  ? "bg-gray-700 text-gray-300 cursor-not-allowed"
-                                  : "bg-white/5 text-white hover:bg-linear-to-r from-green-500 to-emerald-500"
-                              }`}
+                              className={`w-full p-4 rounded-xl flex items-center justify-between gap-3 transition transform hover:scale-102 ${isFull
+                                ? "bg-gray-700 text-gray-300 cursor-not-allowed"
+                                : "bg-white/5 text-white hover:bg-linear-to-r from-green-500 to-emerald-500"
+                                }`}
                             >
                               <div className="text-left">
                                 <div className="text-sm font-semibold">
