@@ -91,5 +91,13 @@ export const meetingsApi = {
     }
     return res.json();
   },
+
+  async getUserBookings(email: string): Promise<Booking[]> {
+    const response = await fetch(`${API_URL}/meetings/bookings/user/${email}`, {
+      cache: "no-store",
+    });
+    if (!response.ok) throw new Error("Failed to fetch user bookings");
+    return response.json();
+  },
 };
 
