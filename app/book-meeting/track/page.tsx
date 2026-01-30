@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { meetingsApi, Booking } from "@/app/api/meetings";
+import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiCalendar, FiClock, FiUser, FiInfo, FiXCircle, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import Link from "next/link";
@@ -33,22 +34,43 @@ export default function TrackBookingPage() {
     };
 
     const handleCancel = async () => {
-        if (!booking || !confirm("Are you sure you want to cancel this booking?")) return;
+        if (!booking) return;
 
-        setCancelling(true);
-        setError(null);
-
-        try {
-            const result = await meetingsApi.cancelBooking(booking.bookingCode);
-            if (result.success) {
-                setBooking(result.data);
-                setSuccessMsg("Booking successfully cancelled.");
-            }
-        } catch (err: any) {
-            setError(err.message || "Failed to cancel booking");
-        } finally {
-            setCancelling(false);
-        }
+        toast((t) => (
+            <div className="flex flex-col gap-3">
+                <p className="font-medium text-zinc-900">Are you sure you want to cancel this booking?</p>
+                <div className="flex gap-2">
+                    <button
+                        onClick={async () => {
+                            toast.dismiss(t.id);
+                            setCancelling(true);
+                            setError(null);
+                            try {
+                                const result = await meetingsApi.cancelBooking(booking.bookingCode);
+                                if (result.success) {
+                                    setBooking(result.data);
+                                    toast.success("Booking successfully cancelled.");
+                                }
+                            } catch (err: any) {
+                                toast.error(err.message || "Failed to cancel booking");
+                                setError(err.message || "Failed to cancel booking");
+                            } finally {
+                                setCancelling(false);
+                            }
+                        }}
+                        className="bg-red-500 text-white px-3 py-1 rounded text-sm font-bold"
+                    >
+                        Yes, Cancel
+                    </button>
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        className="bg-zinc-200 text-zinc-800 px-3 py-1 rounded text-sm font-bold"
+                    >
+                        Keep Booking
+                    </button>
+                </div>
+            </div>
+        ), { duration: 6000 });
     };
 
     const getStatusStyles = (status: string) => {

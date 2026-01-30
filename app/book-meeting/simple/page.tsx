@@ -6,6 +6,7 @@ import {
   Booking,
   BookingInput,
 } from "../../api/meetings";
+import { toast } from "react-hot-toast";
 
 type Step = "date" | "time" | "details" | "confirmation";
 
@@ -123,19 +124,40 @@ export default function BookMeeting() {
       return;
     }
 
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      await meetingsApi.cancelBooking(code);
-      await fetchUserBookings();
-      if (selectedDate) await fetchSlots(selectedDate);
-    } catch (err: any) {
-      setError("Failed to cancel booking");
-    } finally {
-      setLoading(false);
-    }
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <p className="font-medium text-zinc-900">Are you sure you want to cancel this booking?</p>
+        <div className="flex gap-2">
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              setLoading(true);
+              setError(null);
+              try {
+                await meetingsApi.cancelBooking(code);
+                toast.success("Booking successfully cancelled.");
+                await fetchUserBookings();
+                if (selectedDate) await fetchSlots(selectedDate);
+              } catch (err: any) {
+                toast.error(err.message || "Failed to cancel booking");
+                setError("Failed to cancel booking");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            className="bg-red-500 text-white px-3 py-1 rounded text-sm font-bold"
+          >
+            Yes, Cancel
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="bg-zinc-200 text-zinc-800 px-3 py-1 rounded text-sm font-bold"
+          >
+            Keep Booking
+          </button>
+        </div>
+      </div>
+    ), { duration: 6000 });
   };
 
   return (
@@ -205,11 +227,10 @@ export default function BookMeeting() {
                     <button
                       onClick={() => handleCancelBooking(b.bookingCode)}
                       disabled={!canCancel}
-                      className={`px-3 py-1 rounded text-white text-sm ${
-                        canCancel
-                          ? "bg-red-600"
-                          : "bg-gray-600 cursor-not-allowed"
-                      }`}
+                      className={`px-3 py-1 rounded text-white text-sm ${canCancel
+                        ? "bg-red-600"
+                        : "bg-gray-600 cursor-not-allowed"
+                        }`}
                     >
                       Cancel
                     </button>
@@ -235,11 +256,10 @@ export default function BookMeeting() {
                   setSelectedDate(d);
                   setStep("time");
                 }}
-                className={`p-2 rounded ${
-                  selectedDate?.toDateString() === d.toDateString()
-                    ? "bg-blue-600 text-white"
-                    : "bg-white/10 text-white"
-                }`}
+                className={`p-2 rounded ${selectedDate?.toDateString() === d.toDateString()
+                  ? "bg-blue-600 text-white"
+                  : "bg-white/10 text-white"
+                  }`}
               >
                 {d.getDate()}
               </button>
@@ -270,8 +290,8 @@ export default function BookMeeting() {
                 const classes = bookedByUser
                   ? "bg-blue-600 text-white"
                   : slot.currentBookings >= slot.maxBookings
-                  ? "bg-red-600 text-white cursor-not-allowed"
-                  : "bg-green-600 text-white";
+                    ? "bg-red-600 text-white cursor-not-allowed"
+                    : "bg-green-600 text-white";
 
                 return (
                   <button
