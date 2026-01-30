@@ -290,33 +290,10 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Resources Dropdown */}
-            <div className="relative group">
-              <button className="nav-link flex items-center gap-1">
-                Resources
-                <FiChevronDown className="transition-transform group-hover:rotate-180" />
-              </button>
-
-              <div className="absolute left-0 top-full hidden group-hover:block transform transition-all opacity-0 duration-300 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
-                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-96">
-                  <h3 className="text-xl font-bold text-blue-400 mb-4">
-                    Learning Resources
-                  </h3>
-
-                  <div className="space-y-4">
-                    <Link href="/blogs" className="menu-item">
-                      <FiBookOpen className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Blogs</h4>
-                        <p className="text-sm text-gray-400">
-                          Read our latest articles
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Blog Link */}
+            <Link href="/blogs" className="nav-link">
+              Blog
+            </Link>
 
             {/* Get Involved Dropdown */}
             <div className="relative group">
@@ -468,16 +445,13 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Mobile Resources */}
-            <div className="space-y-2">
-              <h3 className="px-4 text-blue-400 font-semibold">Resources</h3>
-              <div className="pl-4 space-y-2">
-                <Link href="/blogs" className="mobile-menu-item">
-                  <FiBookOpen className="w-5 h-5" />
-                  <span>Blogs</span>
-                </Link>
-              </div>
-            </div>
+            {/* Mobile Blog */}
+            <Link
+              href="/blogs"
+              className="block px-4 py-2 text-lg hover:bg-gray-700 rounded-lg"
+            >
+              Blog
+            </Link>
 
             {/* Get Involved */}
             <div className="space-y-2">

@@ -316,7 +316,7 @@ export default function About() {
                 <ul className="space-y-3 text-gray-300">
                   {servicesSection.items.map((item: any, i: number) => (
                     <li key={i} className="flex items-start gap-3">
-                      <span className="text-blue-400 mt-1">✓</span>
+                      <span className="text-blue-400 mt-1">{item.icon || "✓"}</span>
                       <span>{item.title}</span>
                     </li>
                   ))}
@@ -343,7 +343,7 @@ export default function About() {
                 <ul className="space-y-3 text-gray-300">
                   {productsSection.items.map((item: any, i: number) => (
                     <li key={i} className="flex items-start gap-3">
-                      <span className="text-purple-400 mt-1">✓</span>
+                      <span className="text-purple-400 mt-1">{item.icon || "✓"}</span>
                       <span>{item.title}</span>
                     </li>
                   ))}
