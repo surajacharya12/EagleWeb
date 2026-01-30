@@ -1,31 +1,42 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiLinkedin, FiTwitter, FiMail } from "react-icons/fi";
+import { FaWhatsapp } from "react-icons/fa";
 import { founderApi, Founder as IFounder } from "@/app/api/founder";
+import { contactApi, ContactData } from "@/app/api/contact";
 import API_URL from "@/app/api/url";
+import { getSocialIcon } from "../shared/socialUtils";
 
 export default function Founder() {
   const [founder, setFounder] = useState<IFounder | null>(null);
+  const [contact, setContact] = useState<ContactData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const getImageUrl = (img: string) => img?.startsWith('/uploads') ? `${API_URL}${img}` : img;
 
   useEffect(() => {
-    const fetchFounder = async () => {
+    const fetchData = async () => {
       try {
-        const data = await founderApi.getFounder();
-        setFounder(data);
-      } catch (err: any) {
-        console.error("Error fetching founder data:", err);
-        setError(err.message || "Unknown error");
+        const [founderData, contactData] = await Promise.all([
+          founderApi.getFounder(),
+          contactApi.getContact()
+        ]);
+        setFounder(founderData);
+        setContact(contactData);
+      } catch (err: unknown) {
+        console.error("Error fetching data:", err);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Unknown error");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFounder();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -42,6 +53,11 @@ export default function Founder() {
     );
   }
 
+  // Prioritize Founder's specific WhatsApp/Phone, then Contact's
+  const whatsappNumber = founder.whatsapp || contact?.whatsapp || founder.phone || contact?.phone;
+  // Fallback for cleaning number
+  const cleanNumber = whatsappNumber ? whatsappNumber.replace(/\D/g, "") : "";
+
   return (
     <section className="py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="max-w-7xl mx-auto px-6">
@@ -55,7 +71,7 @@ export default function Founder() {
             Meet Our Founder
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            The visionary behind Eagle Infotech's success
+            The visionary behind Eagle Infotech&apos;s success
           </p>
         </motion.div>
 
@@ -72,7 +88,7 @@ export default function Founder() {
                 <img
                   src={getImageUrl(founder.avatar)}
                   alt={founder.name}
-                  className="relative w-48 h-48 rounded-full border-4 border-white/20"
+                  className="relative w-48 h-48 rounded-full border-4 border-white/20 object-cover"
                 />
               </div>
 
@@ -82,35 +98,45 @@ export default function Founder() {
                 </h3>
                 <p className="text-blue-400 text-xl mb-4">{founder.position}</p>
                 <p className="text-gray-300 leading-relaxed mb-4 italic">
-                  "{founder.quote}"
+                  &quot;{founder.quote}&quot;
                 </p>
                 <p className="text-gray-300 leading-relaxed mb-6">
                   {founder.details}
                 </p>
 
-                <div className="flex gap-4 justify-center md:justify-start">
-                  <a
-                    href={founder.socialMedia.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-lg flex items-center justify-center transition-all duration-300"
-                  >
-                    <FiLinkedin className="w-5 h-5 text-gray-400 hover:text-blue-400" />
-                  </a>
-                  <a
-                    href={founder.socialMedia.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-lg flex items-center justify-center transition-all duration-300"
-                  >
-                    <FiTwitter className="w-5 h-5 text-gray-400 hover:text-blue-400" />
-                  </a>
-                  <a
-                    href={`mailto:${founder.socialMedia.email}`}
-                    className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-lg flex items-center justify-center transition-all duration-300"
-                  >
-                    <FiMail className="w-5 h-5 text-gray-400 hover:text-blue-400" />
-                  </a>
+                <div className="flex flex-wrap gap-4 justify-center md:justify-start items-center">
+                  {founder.socials?.map((social) => {
+                    const Icon = getSocialIcon(social.platform);
+                    const href = social.platform.toLowerCase().includes('email')
+                      ? `mailto:${social.url}`
+                      : social.url;
+
+                    return (
+                      <a
+                        key={social._id}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-lg flex items-center justify-center transition-all duration-300"
+                        title={social.platform}
+                      >
+                        <Icon className="w-5 h-5 text-gray-400 hover:text-blue-400" />
+                      </a>
+                    );
+                  })}
+
+                  {/* Schedule a Call Button */}
+                  {cleanNumber && (
+                    <a
+                      href={`https://wa.me/${cleanNumber}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-green-500/30 ml-2"
+                    >
+                      <FaWhatsapp className="w-5 h-5" />
+                      Schedule a Call
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

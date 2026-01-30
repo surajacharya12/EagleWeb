@@ -1,9 +1,28 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FiArrowRight, FiMail, FiPhone } from "react-icons/fi";
+import { FiArrowRight, FiMail, FiPhone, FiMessageSquare } from "react-icons/fi";
 import Link from "next/link";
+import { contactApi } from "@/lib/api/contact";
+import { ContactInfo } from "@/lib/types/contact";
 
 export default function CTA() {
+  const [contact, setContact] = useState<ContactInfo | null>(null);
+
+  useEffect(() => {
+    const fetchContactData = async () => {
+      try {
+        const response = await contactApi.getContact();
+        if (response.success && response.data) {
+          setContact(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch contact details", error);
+      }
+    };
+    fetchContactData();
+  }, []);
+
   return (
     <section className="py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
       {/* Animated Background */}
@@ -63,11 +82,23 @@ export default function CTA() {
               </button>
             </Link>
 
-            <Link href="/schedule">
-              <button className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/30 rounded-full font-semibold text-white backdrop-blur-sm transition-all duration-300">
-                Schedule a Call
-              </button>
-            </Link>
+            {contact?.whatsapp ? (
+              <a
+                href={`https://wa.me/${contact.whatsapp.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/30 rounded-full font-semibold text-white backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-2">
+                  <FiMessageSquare /> Schedule a Call
+                </button>
+              </a>
+            ) : (
+              <Link href="/schedule">
+                <button className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/30 rounded-full font-semibold text-white backdrop-blur-sm transition-all duration-300">
+                  Schedule a Call
+                </button>
+              </Link>
+            )}
           </motion.div>
 
           {/* Contact Links */}
@@ -80,14 +111,14 @@ export default function CTA() {
           >
             <div className="flex items-center gap-2">
               <FiMail className="text-blue-400" />
-              <span>contact@eagleinfotech.com</span>
+              <span>{contact?.email || "Loading..."}</span>
             </div>
 
             <div className="hidden sm:block w-px h-4 bg-gray-600" />
 
             <div className="flex items-center gap-2">
               <FiPhone className="text-blue-400" />
-              <span>+1 (555) 123-4567</span>
+              <span>{contact?.phone || "Loading..."}</span>
             </div>
           </motion.div>
         </motion.div>

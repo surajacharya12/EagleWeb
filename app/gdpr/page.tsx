@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FiShield,
@@ -8,8 +9,22 @@ import {
   FiTrash2,
   FiDownload,
 } from "react-icons/fi";
+import { contactApi } from "@/lib/api/contact";
+import { ContactInfo } from "@/lib/types/contact";
 
 export default function GDPR() {
+  const [contact, setContact] = useState<ContactInfo | null>(null);
+
+  useEffect(() => {
+    const fetchContactData = async () => {
+      const response = await contactApi.getContact();
+      if (response.success && response.data) {
+        setContact(response.data);
+      }
+    };
+    fetchContactData();
+  }, []);
+
   const rights = [
     {
       icon: FiUser,
@@ -131,7 +146,7 @@ export default function GDPR() {
           </p>
           <p className="text-gray-300">
             You can contact our DPO at:{" "}
-            <span className="text-blue-400">dpo@eagleinfotech.com</span>
+            <span className="text-blue-400">{contact?.email || "Loading..."}</span>
           </p>
         </motion.div>
 
@@ -181,12 +196,9 @@ export default function GDPR() {
           <div className="space-y-2">
             <p className="text-gray-300">
               Email:{" "}
-              <span className="text-blue-400">gdpr@eagleinfotech.com</span>
+              <span className="text-blue-400">{contact?.email || "Loading..."}</span>
             </p>
-            <p className="text-gray-300">
-              Data Protection Officer:{" "}
-              <span className="text-blue-400">dpo@eagleinfotech.com</span>
-            </p>
+
           </div>
         </motion.div>
       </div>

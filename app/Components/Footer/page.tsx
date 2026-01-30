@@ -1,16 +1,31 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
-  FiGithub,
-  FiLinkedin,
-  FiTwitter,
-  FiMail,
   FiMapPin,
   FiPhone,
+  FiMail,
 } from "react-icons/fi";
+import { contactApi } from "@/lib/api/contact";
+import { ContactInfo } from "@/lib/types/contact";
+import { getSocialIcon } from "../shared/socialUtils";
 
 export default function Footer() {
+  const [contact, setContact] = useState<ContactInfo | null>(null);
+
+  useEffect(() => {
+    const fetchContactData = async () => {
+      const response = await contactApi.getContact();
+      if (response.success && response.data) {
+        setContact(response.data);
+      }
+    };
+    fetchContactData();
+  }, []);
+
+
+
   const footerLinks = {
     Company: [
       { name: "About Us", href: "/Components/About" },
@@ -28,7 +43,6 @@ export default function Footer() {
     ],
     Resources: [
       { name: "Blog", href: "/blogs" },
-
     ],
     Legal: [
       { name: "Privacy Policy", href: "/privacy" },
@@ -51,22 +65,23 @@ export default function Footer() {
               Transforming ideas into innovative digital solutions. Building the
               future, one project at a time.
             </p>
-            <div className="flex gap-4">
-              {[
-                { icon: FiGithub, href: "#" },
-                { icon: FiLinkedin, href: "#" },
-                { icon: FiTwitter, href: "#" },
-                { icon: FiMail, href: "#" },
-              ].map((social, index) => (
-                <motion.a
-                  key={index}
-                  href={social.href}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-lg flex items-center justify-center transition-all duration-300"
-                >
-                  <social.icon className="w-5 h-5 text-gray-400 hover:text-blue-400" />
-                </motion.a>
-              ))}
+            <div className="flex gap-4 flex-wrap">
+              {contact?.socials?.map((social, index) => {
+                const Icon = getSocialIcon(social.platform);
+                return (
+                  <motion.a
+                    key={index}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-lg flex items-center justify-center transition-all duration-300"
+                    title={social.platform}
+                  >
+                    <Icon className="w-5 h-5 text-gray-400 hover:text-blue-400" />
+                  </motion.a>
+                );
+              })}
             </div>
           </div>
 
@@ -98,7 +113,7 @@ export default function Footer() {
               <div>
                 <p className="font-semibold text-white mb-1">Address</p>
                 <p className="text-sm">
-                  123 Tech Street, Silicon Valley, CA 94025
+                  {contact?.address || "Loading address..."}
                 </p>
               </div>
             </div>
@@ -106,14 +121,14 @@ export default function Footer() {
               <FiPhone className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
               <div>
                 <p className="font-semibold text-white mb-1">Phone</p>
-                <p className="text-sm">+1 (555) 123-4567</p>
+                <p className="text-sm">{contact?.phone || "Loading phone..."}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <FiMail className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
               <div>
                 <p className="font-semibold text-white mb-1">Email</p>
-                <p className="text-sm">contact@eagleinfotech.com</p>
+                <p className="text-sm">{contact?.email || "Loading email..."}</p>
               </div>
             </div>
           </div>
@@ -132,3 +147,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+

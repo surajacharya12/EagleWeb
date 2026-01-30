@@ -1,8 +1,23 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FiSettings, FiTarget, FiBarChart, FiCircle } from "react-icons/fi";
+import { contactApi } from "@/lib/api/contact";
+import { ContactInfo } from "@/lib/types/contact";
 
 export default function CookiePolicy() {
+  const [contact, setContact] = useState<ContactInfo | null>(null);
+
+  useEffect(() => {
+    const fetchContactData = async () => {
+      const response = await contactApi.getContact();
+      if (response.success && response.data) {
+        setContact(response.data);
+      }
+    };
+    fetchContactData();
+  }, []);
+
   const cookieTypes = [
     {
       icon: FiSettings,
@@ -132,7 +147,7 @@ export default function CookiePolicy() {
             If you have questions about our use of cookies, please contact us
             at:
           </p>
-          <p className="text-blue-400 mt-2">privacy@eagleinfotech.com</p>
+          <p className="text-blue-400 mt-2">{contact?.email || "Loading..."}</p>
         </motion.div>
       </div>
     </div>

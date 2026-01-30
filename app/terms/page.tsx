@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FiFileText,
@@ -6,8 +7,22 @@ import {
   FiCheckCircle,
   FiXCircle,
 } from "react-icons/fi";
+import { contactApi } from "@/lib/api/contact";
+import { ContactInfo } from "@/lib/types/contact";
 
 export default function TermsOfService() {
+  const [contact, setContact] = useState<ContactInfo | null>(null);
+
+  useEffect(() => {
+    const fetchContactData = async () => {
+      const response = await contactApi.getContact();
+      if (response.success && response.data) {
+        setContact(response.data);
+      }
+    };
+    fetchContactData();
+  }, []);
+
   const sections = [
     {
       icon: FiCheckCircle,
@@ -148,7 +163,7 @@ export default function TermsOfService() {
             If you have any questions about these Terms of Service, please
             contact us at:
           </p>
-          <p className="text-blue-400 mt-2">legal@eagleinfotech.com</p>
+          <p className="text-blue-400 mt-2">{contact?.email || "Loading..."}</p>
         </motion.div>
       </div>
     </div>

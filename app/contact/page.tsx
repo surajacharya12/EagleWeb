@@ -1,8 +1,30 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FiMail, FiPhone, FiMapPin, FiSend } from "react-icons/fi";
+import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageSquare } from "react-icons/fi";
+import { contactApi, ContactData } from "@/app/api/contact";
+import { getSocialIcon } from "../Components/shared/socialUtils";
+
+// Define a local interface or import if available. Assuming ContactData covers it.
+// We imported ContactData from api/contact.
 
 export default function Contact() {
+  const [contact, setContact] = useState<ContactData | null>(null);
+
+  useEffect(() => {
+    const fetchContactData = async () => {
+      try {
+        const data = await contactApi.getContact();
+        if (data) {
+          setContact(data);
+        }
+      } catch (e) {
+        console.error("Error fetching contact:", e);
+      }
+    };
+    fetchContactData();
+  }, []);
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-6">
@@ -15,7 +37,7 @@ export default function Contact() {
             Get In Touch
           </h1>
           <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto">
-            Have a question or want to work together? We'd love to hear from
+            Have a question or want to work together? We&apos;d love to hear from
             you.
           </p>
         </motion.div>
@@ -32,7 +54,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-white font-semibold mb-2">Email</h3>
-                <p className="text-gray-400">contact@eagleinfotech.com</p>
+                <p className="text-gray-400">{contact?.email || "Loading..."}</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
@@ -41,22 +63,61 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-white font-semibold mb-2">Phone</h3>
-                <p className="text-gray-400">+1 (555) 123-4567</p>
+                <p className="text-gray-400">{contact?.phone || "Loading..."}</p>
               </div>
             </div>
+            {contact?.whatsapp && (
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-green-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <FiMessageSquare className="w-6 h-6 text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">WhatsApp</h3>
+                  <a href={`https://wa.me/${contact.whatsapp.replace(/\D/g, "")}`} className="text-gray-400 hover:text-green-400 transition-colors">
+                    {contact.whatsapp}
+                  </a>
+                </div>
+              </div>
+            )}
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
                 <FiMapPin className="w-6 h-6 text-blue-400" />
               </div>
               <div>
                 <h3 className="text-white font-semibold mb-2">Address</h3>
-                <p className="text-gray-400">
-                  123 Tech Street
-                  <br />
-                  Silicon Valley, CA 94025
+                <p className="text-gray-400 whitespace-pre-line">
+                  {contact?.address || "Loading..."}
                 </p>
               </div>
             </div>
+
+            {/* Dynamic Social Icons */}
+            {contact?.socials && contact.socials.length > 0 && (
+              <div className="pt-8 border-t border-white/10">
+                <h3 className="text-white font-semibold mb-4">Connect With Us</h3>
+                <div className="flex flex-wrap gap-4">
+                  {contact.socials.map((social) => {
+                    const Icon = getSocialIcon(social.platform);
+                    const href = social.platform.toLowerCase().includes('email')
+                      ? `mailto:${social.url}`
+                      : social.url;
+
+                    return (
+                      <a
+                        key={social._id}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-lg flex items-center justify-center transition-all duration-300 group"
+                        title={social.platform}
+                      >
+                        <Icon className="w-5 h-5 text-gray-400 group-hover:text-blue-400" />
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </motion.div>
 
           <motion.div

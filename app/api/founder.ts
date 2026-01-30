@@ -7,7 +7,15 @@ export interface Founder {
     quote: string;
     details: string;
     avatar: string;
-    socialMedia: {
+    displaySocials?: boolean;
+    socials?: {
+        platform: string;
+        url: string;
+        _id: string;
+    }[];
+    whatsapp?: string;
+    phone?: string;
+    socialMedia?: {
         linkedin?: string;
         twitter?: string;
         email?: string;
