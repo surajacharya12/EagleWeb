@@ -152,3 +152,30 @@ body {
   perspective: 1000px;
 }
 
+/* Mouse effect dot */
+.mouse-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.95), rgba(59, 130, 246, 0.35));
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate3d(-50%, -50%, 0);
+  transition: opacity 0.25s ease, transform 0.06s linear;
+  opacity: 0;
+  z-index: 9999;
+  mix-blend-mode: screen;
+}
+
+.mouse-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.12), transparent 40%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+

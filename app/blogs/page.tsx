@@ -4,8 +4,6 @@ import API_URL from "../api/url";
 import BlogCard, { Blog } from "./components/BlogCard";
 import { motion } from "framer-motion";
 
-
-
 export default function BlogPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,16 +69,19 @@ export default function BlogPage() {
             className="flex flex-wrap justify-center gap-3 mb-12"
           >
             {categories.map((category) => (
-              <button
+              <motion.button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${selectedCategory === category
-                  ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.5)]"
-                  : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
-                  }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  selectedCategory === category
+                    ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.6)] border border-blue-400/50"
+                    : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10 hover:border-blue-400/30"
+                }`}
               >
                 {category}
-              </button>
+              </motion.button>
             ))}
           </motion.div>
         )}
@@ -93,18 +94,30 @@ export default function BlogPage() {
               />
             ))}
           </div>
-        ) : blogs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogs.map((blog) => (
-              <BlogCard key={typeof blog._id === 'string' ? blog._id : blog._id.$oid} blog={blog} />
+        ) : filteredBlogs.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ staggerChildren: 0.1 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {filteredBlogs.map((blog, idx) => (
+              <motion.div
+                key={typeof blog._id === "string" ? blog._id : blog._id.$oid}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+              >
+                <BlogCard blog={blog} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <div className="text-center text-zinc-500 py-20">
-            <p className="text-xl">No blogs found yet.</p>
+          <div className="text-center text-gray-400 py-20">
+            <p className="text-xl">No blogs found in this category.</p>
           </div>
         )}
       </div>
-    </div >
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./Components/NavBar/page";
 import Footer from "./Components/Footer/page";
+import MouseEffect from "./Components/MouseEffect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster position="top-right" />
+        <MouseEffect />
         <Navbar />
         {children}
         <Footer />
